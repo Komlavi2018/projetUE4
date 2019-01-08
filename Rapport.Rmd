@@ -1,0 +1,178 @@
+---
+title: 'Entrepôt et fouille de données : étude écologique'
+author: "Mawulolo Komlavi Agblevi, Pierre Karapetiantz"
+date: "06 janvier 2018"
+
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+**Objectif principal:**  Mettre en évidence des associations entre les variations géographiques des émissions de polluants, de déchets et de radon entre départements et la maladie X.
+
+## 1	Création d’un entrepôt de données
+
+**Objectif :**
+
+Créer un entrepôt de données au format i2b2 (Informatics for Integrating Biology and the Bedside) afin de réaliser une étude écologique.
+
+Nous avons sélectionné les données suivantes pour les intégrer à notre entrepôt de données :
+
+
+* 	Polluants :
+    + Etablissements et leur localisation («          registre-francais-des-emission-polluantes-etablissements.csv »)
+    +	Déchets (« Prod_dechets_dangereux.csv »)
+    +	Emissions (« emissions.csv »)
+
+*	Radons (« radon.csv »)
+*	Evénements (« evenements.csv »)
+*	Départements :
+    +	Effectifs (« effectif.departement.csv »)
+    +	Localisation (« Coordonnees Departement.xlsx », disponibles sur le site https://melusine.eu.org/syracuse/jms/depfr/?fbclid=IwAR3anIOhM_KU6rN__WxWQFz3NtCSWjBddwxDQqvYv2vRHZsYS0OIOhKNHGQ)
+
+
+**Période et zone d’étude :** Nous avons réalisé notre étude sur toute la France métropolitaine au niveau du département pour l’année 2017.
+
+Une fois les données sélectionnées, nous avons réalisé le diagramme en étoile ci-après afin de modéliser notre entrepôt.
+
+
+
+```{r Entropot de donnée, image, echo = FALSE,fig.cap="Figure 1 : Diagramme en étoile de l’entrepôt de données créé",out.width='100%' }
+  knitr::include_graphics("C:/Users/Administrator/Desktop/projetUE4/Entrepot/entrepot de donnee_n.PNG")
+
+
+```
+Les fichiers en annexe décrivent les différentes dimensions de notre entrepôt de données :
+
+
+* Dimension_population.csv
+*	Dimension_radon.csv
+*	Dimension_emission.csv
+*	Dimension_dechet.csv
+*	Dimension_etablissement.csv
+*	Dimension_evenement.csv
+*	Dimension_localisation.csv
+
+Ces dimensions contiennent des lignes uniques (pas de redondance) et seront liées entre elles par des relations. Il sera alors possible de les interroger via des requêtes SQL.
+
+**Les avantages de cette méthode sont :**
+
+
+*	Facilite le stockage en évitant les répétitions
+*	Les données sont normalisées
+*	Les données sont plus facilement disponibles par des requêtes SQL
+*	Les données peuvent être explorées de manière instantanée, ce qui favorise la surveillance, la prédiction
+*	L’entrepôt permet de stocker une grande quantité de données (Big data)
+*	Granularité du département en commun avec toutes les bases
+
+
+**Mais elle a également des inconvénients :**
+
+
+*	Les études ne pourront se faire qu’au niveau du département, nous n’avons pas pris en compte la possibilité de faire des études avec une autre granularité
+     +	De plus, le fichier radon donne la classe potentielle selon la commune (plusieurs valeurs par départements) nous avons choisi de prendre la moyenne ; de plus, la table radon concernait les 227 départements (France métropolitaine et DOM-TOM alors que nous limitons notre étude à la France métropolitaine) : il a fallu sélectionner l’information pour les 96 départements d’étude
+*	Les données sont des données de populations et non des données individuelles 
+     +	Cela entraîne un biais car :
+	L’exposition individuelle n’est pas disponible
+	Pas de données sur les comportements, catégorie socio-professionnelle, etc…
+*	Ces données sont hétérogènes (zones géographiques, zones temporelles, …) et non standardisées
+*	Nous avons effectué notre analyse sur l’année 2017 uniquement
+     +	Nous avons donc fait le postulat que les fichiers « evenements.csv » et « effectif.departement » provenaient de la même année.
+
+De plus, l’éthique est un enjeu important dans les entrepôts de données. L’identité d’un patient peut facilement être retrouvée à partir de peu d’informations le concernant. Ici, seuls le fichier événement est un fichier sensible (par exemple, il n’y qu’une seule observation de l’événement en Haute Corse et nous avons la classe d’âge et le sexe de la personne concernée).
+
+
+## 2	Constructions de cartes interactives
+
+Nous avons créé des cartes interactives permettant d’explorer l’entrepôt de données créé précédemment.
+
+Les captures d’écran suivantes décrivent les différentes cartes créées.
+
+```{r carte, image, echo = FALSE,fig.cap="Figure 2 : Aperçu d’une carte interactive décrivant la classe du potentiel radon des départements en France métropolitaine",out.width='100%' }
+knitr::include_graphics("C:/Users/Administrator/Desktop/projetUE4/code R/classe_potentiel_radon.PNG")
+```
+
+7
+
+```{r carte1, image, echo = FALSE,fig.cap="Figure 3 : Aperçu d’une carte interactive décrivant les effectifs des départements en France métropolitaine",out.width='100%' }
+knitr::include_graphics("C:/Users/Administrator/Desktop/projetUE4/code R/effectif_dep.PNG")
+```
+
+
+
+```{r carte2, image, echo = FALSE,fig.cap="Figure 4 : Aperçu d’une carte interactive décrivant les émissions d’oxydes d’azote en France métropolitaine",out.width='100%' }
+  knitr::include_graphics("C:/Users/Administrator/Desktop/projetUE4/code R/emission_SOX.PNG")
+```
+
+
+```{r carte3, image, echo = FALSE,fig.cap="Figure 5 : Aperçu d’une carte interactive décrivant les établissements polluants en France métropolitaine (1)",out.width='100%' }
+  knitr::include_graphics("C:/Users/Administrator/Desktop/projetUE4/code R/etablissement_polluant.PNG")
+```
+
+
+
+
+```{r carte4, image, echo = FALSE,fig.cap="Figure 6 : Aperçu d’une carte interactive décrivant les établissements polluants en France métropolitaine (1)",out.width='100%' }
+  knitr::include_graphics("C:/Users/Administrator/Desktop/projetUE4/code R/etablissement_polluant1.PNG")
+```
+
+```{r carte5, image, echo = FALSE,fig.cap="Figure 7 : Aperçu d’une carte interactive décrivant les établissements polluants en France métropolitaine (2)",out.width='100%' }
+  knitr::include_graphics("C:/Users/Administrator/Desktop/projetUE4/code R/etablissement_polluant2.PNG")
+```
+
+```{r carte6, image, echo = FALSE,fig.cap="Figure 8 : Aperçu d’une carte interactive décrivant les événements en France métropolitaine",out.width='100%' }
+  knitr::include_graphics("C:/Users/Administrator/Desktop/projetUE4/code R/evenement.x.PNG")
+```
+
+
+
+## 3	Analyse statistique
+
+
+**Objectif :** 
+
+Analyser la corrélation entre exposition environnementales et répartition des patients atteints de la maladie X par des méthodes de statistiques spatiales
+
+
+**Matériel et méthode :**
+
+Nous disposions du nombre d’événements par départements (par classe d’âge et par sexe) ainsi que du nombre d’habitants dans les départements (par classe d’âge et par sexe) et les localisations de ces derniers : 
+https://melusine.eu.org/syracuse/jms/depfr/?fbclid=IwAR3anIOhM_KU6rN__WxWQFz3NtCSWjBddwxDQqvYv2vRHZsYS0OIOhKNHGQ.  
+Nous avons réalisé notre étude sur la population générale, puis sur les hommes et sur les femmes séparément. 
+Nous avons réalisé un test de Stone pour chacune des 96 régions de France métropolitaine. Ce test estime le risque autour d’un lieu donné (dans notre cas, autour d’un département). L’hypothèse nulle est que les risques relatifs sont constants autours de ce lieu et l’hypothèse alternative est que ce risque diminue au plus on s’éloigne de ce point.
+Pour chaque étude concernant un département, les 95 autres ont été permutés 100 fois afin 
+Le modèle suit une loi de poisson (car c’est une loi de probabilité discrète décrivant le comportement du nombre d'événements se produisant dans uns certain intervalle de temps).
+
+Afin de pallier au problème de la multiplicité des tests, nous avons corrigé les p-values avec la procédure de Bonferroni qui consiste à transformer la p-valeur en le minimum entre K*p et 1. Avec K le nombre de tests effectués et p la p-valeur du test d’origine.
+
+
+**Résultats :**
+
+Les p-valeurs avec et sans corrections sont disponibles dans le fichier « pvalue_TestsMultiples.xlsx » : aucun test significatif n’était significatif après correction.
+
+
+**Discussion :**
+
+Aucun test n’est significatif après correction, mais la p-valeur minimum donnée par l’algorithme de stone.test du package Dcluster semble être à 0.01, ce qui pourrait avoir entraîné des faux négatifs avec la correction.
+Pour une étude future, une analyse du code de cette fonction sera nécessaire.
+De plus, notre étude n’a pas considéré l’âge.
+
+Les départements pour lesquels la p-valeur était de 0.01 avant corrections sont décrits dans le tableau 1 avec sa classe de potentiel radon et la quantité d’émission d’oxyde d’azote en kg pour l’année 2017 ainsi que la classe correspondante (1 si <Q1 ; 2 si [Q1 ; Mediane[ ; 3 si [Mediane ; Q3[ et 4 si >= Q3).
+
+
+```{r carte9, image, echo = FALSE,fig.cap="Tableau 1 : Départements avec p = 0.01 et leurs expositions aux polluants (2017)",out.width='100%' }
+  knitr::include_graphics("C:/Users/Administrator/Desktop/projetUE4/Entrepot/n.PNG")
+```
+
+
+
+
+
+
+  **conclusion**
+  
+  
+Cette étude devra être poursuivie en appliquant des modèles SAR (Simultaneous Auto-Regression) et CAR (Conditionnal Auto-Regression).
+
+
